@@ -25,7 +25,8 @@ runs:
         repository: ${{ inputs.github-org }}/${{ inputs.github-repo }}
         ref: 'main'
         token: ${{ inputs.github-token }}
-    - name: "k8s deploy"        
+    - name: "k8s deploy"      
+      shell: bash
       run: |
         cd ${{ inputs.namespace }}/${{ github.event.repository.name }}
         yq -i '.image = "${{ inputs.azure-container-registry }}/${{ github.event.repository.name }}:${{ inputs.tag }}"' values.yaml
