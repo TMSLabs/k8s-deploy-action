@@ -28,7 +28,7 @@ runs:
     
     - name: Set Docker tag        
       run: |
-        SHORT_SHA=$(git rev-parse --short HEAD)
+        SHORT_SHA=${GITHUB_SHA::7}
         if [[ "${{ github.event_name }}" == "release" ]]; then
           TAG="${{ github.event.release.tag_name }}"
         elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
