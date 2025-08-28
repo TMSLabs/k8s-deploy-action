@@ -43,7 +43,7 @@ runs:
       shell: bash
       run: |
         cd ${{ inputs.namespace }}/${{ github.event.repository.name }}
-        yq -i '.image = "${{ inputs.azure-container-registry }}/${{ github.event.repository.name }}:${{ end.DOCKER_TAG }}"' values.yaml
+        yq -i '.image = "${{ inputs.azure-container-registry }}/${{ github.event.repository.name }}:${{ env.DOCKER_TAG }}"' values.yaml
         cd ../..
         git config --global user.name 'Git bot'
         git config --global user.email 'bot@noreply.github.com'
