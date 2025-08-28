@@ -25,11 +25,25 @@ runs:
         repository: ${{ inputs.github-org }}/${{ inputs.github-repo }}
         ref: 'main'
         token: ${{ inputs.github-token }}
+    
+    - name: Set Docker tag        
+      run: |
+        SHORT_SHA=$(git rev-parse --short HEAD)
+        if [[ "${{ github.event_name }}" == "release" ]]; then
+          TAG="${{ github.event.release.tag_name }}"
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          TAG="pr-${{ github.event.pull_request.number }}-${SHORT_SHA}"
+        else
+          TAG="main-${SHORT_SHA}"
+        fi
+        echo "DOCKER_TAG=$TAG" >> $GITHUB_ENV
+      shell: bash
+      
     - name: "k8s deploy"      
       shell: bash
       run: |
         cd ${{ inputs.namespace }}/${{ github.event.repository.name }}
-        yq -i '.image = "${{ inputs.azure-container-registry }}/${{ github.event.repository.name }}:${{ inputs.tag }}"' values.yaml
+        yq -i '.image = "${{ inputs.azure-container-registry }}/${{ github.event.repository.name }}:${{ end.DOCKER_TAG }}"' values.yaml
         cd ../..
         git config --global user.name 'Git bot'
         git config --global user.email 'bot@noreply.github.com'
